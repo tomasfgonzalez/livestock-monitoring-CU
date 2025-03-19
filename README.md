@@ -3,7 +3,7 @@ This repository contains the firmware and code for the Central Unit of the Lives
 
 ## The Central Unit is responsible for:
 
-Receiving data from multiple IoT sensor nodes deployed on livestock.
-Processing incoming data to detect anomalies.
-Sending alerts via ethernet.
-Forwarding collected data for further analysis.
+* Receiving data from multiple IoT sensor nodes deployed on livestock.
+* Processing incoming data to detect anomalies.
+* Sending alerts via ethernet.
+* Forwarding collected data for further analysis.
