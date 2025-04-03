@@ -7,3 +7,7 @@ This repository contains the firmware and code for the Central Unit of the Lives
 * Processing incoming data to detect anomalies.
 * Sending alerts via ethernet.
 * Forwarding collected data for further analysis.
+
+## Quick start
+### Minimal setup
+![Setup of the CU protoype](./img/prototype.png)
