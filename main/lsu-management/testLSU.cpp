@@ -7,7 +7,7 @@
   */
 
 /**
- * Run tests with the commands:
+ * Run tests with the command:
  * g++ -std=c++17 testLSU.cpp LSU.cpp LSUManager.cpp -o testLSU && "./testLSU"
  */
 
