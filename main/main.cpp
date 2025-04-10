@@ -3,23 +3,41 @@
 #include <freertos/task.h>
 #include <freertos/mpu_wrappers.h>
 #include <freertos/projdefs.h>
-#include "uart0.h"
+#include "uart.h"
+#include "rylr998.h"
+#include "rx_buff.h"
+#include "esp_log.h"
 
-#define BUF_SIZE 256
+
+static void rx_task(void *arg) {
+  static const char *RX_TASK_TAG = "RX_TASK";
+  ESP_LOGI(RX_TASK_TAG, "RX task started");
+
+  uint8_t* rx_buff = rx_buff_get();
+  while (1) {
+    const int rxBytes = uart_read_bytes(UART_NUM_1, rx_buff, RX_BUFF_SIZE, 1000 / portTICK_PERIOD_MS);
+    if (rxBytes > 0) {
+      rx_buff[rxBytes] = 0;
+      rylr998_SetInterruptFlag(true);
+      ESP_LOGI(RX_TASK_TAG, "Read %d bytes: %s", rxBytes, rx_buff);
+      // ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, rx_buff, rxBytes, ESP_LOG_INFO);
+    }
+    vTaskDelay(pdMS_TO_TICKS(500));
+  }
+}
 
 extern "C" void app_main(void) {
-  uart0_init(BUF_SIZE);
+  static const char *MAIN_TAG = "MAIN_RUN";
 
-  uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
-  while (true) {
-    int len = uart0_receive(data, BUF_SIZE);
+  ESP_LOGI(MAIN_TAG, "Starting main");
+  uart_init(RX_BUFF_SIZE, UART1_PORT_NUM);
 
-    // Write data back to the UART
-    uart0_send(data, len);
-    if (len) {
-      data[len] = '\0';
-      // printf("LAPUTAMADRE! str: %s", (char *) data);
-    }
-    vTaskDelay(pdMS_TO_TICKS(1000));
+  xTaskCreate(rx_task, "uart_rx_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL);
+  rylr998_setChannel(1, 0x01);
+
+  while (1) {
+    CU_sendConfigPackage();
+    ESP_LOGI(MAIN_TAG, "Config package sent");
+    vTaskDelay(pdMS_TO_TICKS(3000));
   }
 }
