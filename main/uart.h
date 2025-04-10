@@ -29,12 +29,12 @@ extern "C" {
 
 /* Macros --------------------------------------------------------------------*/
 #define UART1_PORT_NUM       UART_NUM_1
-#define UART1_TXD             10
-#define UART1_RXD             9
+#define UART1_TXD             17
+#define UART1_RXD             16
 
 #define UART2_PORT_NUM       UART_NUM_2
-#define UART2_TXD             17
-#define UART2_RXD             16
+#define UART2_TXD            -1
+#define UART2_RXD            -1
 
 #define UART_RTS             UART_PIN_NO_CHANGE
 #define UART_CTS             UART_PIN_NO_CHANGE
@@ -45,10 +45,10 @@ extern "C" {
 /* Function prototypes -------------------------------------------------------*/
 void uart_init(uint16_t buf_size, uint8_t port_num);
 
-void uart1_send(uint8_t *data, uint16_t length);
+void uart1_send(const char *data, uint16_t length);
 uint16_t uart1_receive(uint8_t *data, uint16_t length);
 
-void uart2_send(uint8_t *data, uint16_t length);
+void uart2_send(const char *data, uint16_t length);
 uint16_t uart2_receive(uint8_t *data, uint16_t length);
 
 #ifdef __cplusplus

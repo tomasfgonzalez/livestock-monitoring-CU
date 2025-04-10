@@ -8,6 +8,11 @@
 #ifndef INC_RYLR998_H_
 #define INC_RYLR998_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include "esp_system.h"
 #include "esp_log.h"
 #include "driver/uart.h"
@@ -105,5 +110,10 @@ RYLR_RX_command_t rylr998_ResponseFind(const char *rxBuffer);
 void rylr998_SetInterruptFlag(uint8_t val);
 uint8_t rylr998_GetInterruptFlag(void);
 
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_RYLR998_H_ */

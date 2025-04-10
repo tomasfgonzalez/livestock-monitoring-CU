@@ -19,15 +19,18 @@ extern "C" {
 /* Defines -------------------------------------------------------------------*/
 #define RX_BUFF_SIZE 128
 
-/* Variables -----------------------------------------------------------------*/
-extern uint8_t rx_buff[RX_BUFF_SIZE];
-
 /* Function prototypes -------------------------------------------------------*/
 /**
  * @brief  Initialize the RX buffer
  * @retval None
  */
 void rx_buff_init(void);
+
+/**
+ * @brief  Get the RX buffer
+ * @retval Pointer to the RX buffer
+ */
+uint8_t* rx_buff_get(void);
 
 /**
  * @brief  Write data to the RX buffer

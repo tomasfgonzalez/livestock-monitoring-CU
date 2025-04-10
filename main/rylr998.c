@@ -147,21 +147,27 @@ static void rylr998_setCRFOP(const uint8_t CRFOP){
 
 
 void rylr998_config(const RYLR_config_t *config_handler){
+	const char *RYLR_TAG = "RYLR";
+	uint8_t* rx_buff = rx_buff_get();
 		//rylr998_FACTORY();
 		//rylr998_getCommand(RYLR_FACTORY,rx_buff,RX_BUFF);
 		//NETWORKID
 		
 		rylr998_networkId(config_handler->networkId);
 		rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
+		ESP_LOGI(RYLR_TAG, "Network ID set to %d\n", config_handler->networkId);
 		//ADDRESS
 		rylr998_setAddress(config_handler->address);
 		rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
+		ESP_LOGI(RYLR_TAG, "Address set to %d\n", config_handler->address);
 		//PARAMETERS
 		rylr998_setParameter(config_handler->SF, config_handler->BW, config_handler->CR, config_handler->ProgramedPreamble);
 		rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
+		ESP_LOGI(RYLR_TAG, "Parameters set\n");
 		//MODE
 		rylr998_mode(config_handler->mode,config_handler->rxTime,config_handler->LowSpeedTime);
 		rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
+		ESP_LOGI(RYLR_TAG, "Mode set to %d\n", config_handler->mode);
 		//BaudRate
 		//rylr998_setBaudRate(config_handler->baudRate);
 		//rylr998_getCommand(RYLR_IPR,rx_buff,RX_BUFFER_SIZE); //ADD RYLR_IPR
@@ -174,6 +180,7 @@ void rylr998_config(const RYLR_config_t *config_handler){
 		//RF Output
 		rylr998_setCRFOP(config_handler->CRFOP);
 		rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
+		ESP_LOGI(RYLR_TAG, "CRFOP set to %d\n", config_handler->CRFOP);
 }
 
 
@@ -213,14 +220,15 @@ void LSU_sendSyncRequest(uint16_t destination){
 }
 
 void CU_sendConfigPackage() {
+	uint8_t* rx_buff = rx_buff_get();
 	memset(uartTxBuffer, 0, sizeof(TX_BUFFER_SIZE));
-	sprintf(uartTxBuffer, AT"SEND=TEST"END);
+	snprintf(uartTxBuffer, TX_BUFFER_SIZE, AT"SEND=1,4,TEST"END);
 	
 	rylr998_sendCommand(uartTxBuffer);
 	// HAL_Delay(500);
 	vTaskDelay(pdMS_TO_TICKS(500));
 
-	// rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF);
+	rylr998_getCommand(RYLR_OK,rx_buff,RX_BUFF_SIZE);
 	
 }
 
@@ -232,7 +240,8 @@ void CU_sendConfigPackage() {
 // 			SEND AND GET DATA FROM LPUART1
 //------------------------------------------------
 void rylr998_sendCommand(const char *cmd) {
-	uart1_send(cmd, strlen(cmd));
+	uint16_t len = strlen(cmd);
+	uart1_send(cmd, len);
 }
 
 void rylr998_getCommand(RYLR_RX_command_t cmd,uint8_t *rx_buff,uint8_t RX_BUFFER_SIZE){

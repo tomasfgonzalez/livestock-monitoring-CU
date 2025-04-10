@@ -5,32 +5,39 @@
 #include <freertos/projdefs.h>
 #include "uart.h"
 #include "rylr998.h"
+#include "rx_buff.h"
+#include "esp_log.h"
 
-#define BUF_SIZE 256
 
-static void rx_task(void *arg)
-{
-    static const char *RX_TASK_TAG = "RX_TASK";
-    esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
-    uint8_t* data = (uint8_t*) malloc(BUF_SIZE + 1);
-    while (1) {
-        const int rxBytes = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 1000 / portTICK_PERIOD_MS);
-        if (rxBytes > 0) {
-            data[rxBytes] = 0;
-            ESP_LOGI(RX_TASK_TAG, "Read %d bytes: '%s'", rxBytes, data);
-            ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_INFO);
-        }
+static void rx_task(void *arg) {
+  static const char *RX_TASK_TAG = "RX_TASK";
+  ESP_LOGI(RX_TASK_TAG, "RX task started");
+
+  uint8_t* rx_buff = rx_buff_get();
+  while (1) {
+    const int rxBytes = uart_read_bytes(UART_NUM_1, rx_buff, RX_BUFF_SIZE, 1000 / portTICK_PERIOD_MS);
+    if (rxBytes > 0) {
+      rx_buff[rxBytes] = 0;
+      rylr998_SetInterruptFlag(true);
+      ESP_LOGI(RX_TASK_TAG, "Read %d bytes: %s", rxBytes, rx_buff);
+      // ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, rx_buff, rxBytes, ESP_LOG_INFO);
     }
-    free(data);
+    vTaskDelay(pdMS_TO_TICKS(500));
+  }
 }
 
 extern "C" void app_main(void) {
-  uart_init(BUF_SIZE, UART1_PORT_NUM);
+  static const char *MAIN_TAG = "MAIN_RUN";
 
-  xTaskCreate(rx_task, "uart_rx_task", 1024 * 2, NULL, configMAX_PRIORITIES - 1, NULL);
+  ESP_LOGI(MAIN_TAG, "Starting main");
+  uart_init(RX_BUFF_SIZE, UART1_PORT_NUM);
+
+  xTaskCreate(rx_task, "uart_rx_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL);
+  rylr998_setChannel(1, 0x01);
 
   while (1) {
     CU_sendConfigPackage();
+    ESP_LOGI(MAIN_TAG, "Config package sent");
     vTaskDelay(pdMS_TO_TICKS(3000));
   }
 }

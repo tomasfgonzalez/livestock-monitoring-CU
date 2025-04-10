@@ -10,7 +10,7 @@
 #include <string.h>
 
 /* Private variables ---------------------------------------------------------*/
-uint8_t rx_buff[RX_BUFF_SIZE];
+static uint8_t rx_buff[RX_BUFF_SIZE + 1];
 static uint16_t rx_head = 0;
 static uint16_t rx_tail = 0;
 static uint16_t rx_count = 0;
@@ -21,6 +21,10 @@ void rx_buff_init(void) {
     rx_tail = 0;
     rx_count = 0;
     memset(rx_buff, 0, RX_BUFF_SIZE);
+}
+
+uint8_t* rx_buff_get(void) {
+    return rx_buff;
 }
 
 uint16_t rx_buff_write(const uint8_t *data, uint16_t length) {

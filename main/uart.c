@@ -40,16 +40,16 @@ void uart_init(uint16_t buf_size, uint8_t port_num) {
   ESP_ERROR_CHECK(uart_set_pin(port_num, UART1_TXD, UART1_RXD, UART_RTS, UART_CTS));
 }
 
-void uart1_send(uint8_t *data, uint16_t length) {
-  uart_write_bytes(UART1_PORT_NUM, (const char *) data, length);
+void uart1_send(const char *data, uint16_t length) {
+  uart_write_bytes(UART1_PORT_NUM, data, length);
 }
 
 uint16_t uart1_receive(uint8_t *data, uint16_t length) {
   return uart_read_bytes(UART1_PORT_NUM, data, length, 2);
 }
 
-void uart2_send(uint8_t *data, uint16_t length) {
-  uart_write_bytes(UART2_PORT_NUM, (const char *) data, length);
+void uart2_send(const char *data, uint16_t length) {
+  uart_write_bytes(UART2_PORT_NUM, data, length);
 }
 
 uint16_t uart2_receive(uint8_t *data, uint16_t length) {
