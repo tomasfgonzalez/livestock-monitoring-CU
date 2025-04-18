@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @authors        : Tomas Gonzalez & Brian Morris
-  * @file           : uart0.c
+  * @file           : uart.c
   * @brief          : Source for uart0 file
   ******************************************************************************
   * @attention
@@ -17,12 +17,12 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "uart0.h"
+#include "uart.h"
 
 /* Private variables ---------------------------------------------------------*/
-void uart0_init(uint16_t buf_size) {
+void uart_init(uint16_t buf_size, uint8_t port_num) {
   uart_config_t uart_config = {
-        .baud_rate = UART0_BAUD_RATE,
+        .baud_rate = UART_BAUD_RATE,
         .data_bits = UART_DATA_8_BITS,
         .parity    = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
@@ -35,15 +35,23 @@ void uart0_init(uint16_t buf_size) {
     intr_alloc_flags = ESP_INTR_FLAG_IRAM;
 #endif
 
-  ESP_ERROR_CHECK(uart_driver_install(UART0_PORT_NUM, buf_size * 2, 0, 0, NULL, intr_alloc_flags));
-  ESP_ERROR_CHECK(uart_param_config(UART0_PORT_NUM, &uart_config));
-  ESP_ERROR_CHECK(uart_set_pin(UART0_PORT_NUM, UART0_TXD, UART0_RXD, UART0_RTS, UART0_CTS));
+  ESP_ERROR_CHECK(uart_driver_install(port_num, buf_size * 2, 0, 0, NULL, intr_alloc_flags));
+  ESP_ERROR_CHECK(uart_param_config(port_num, &uart_config));
+  ESP_ERROR_CHECK(uart_set_pin(port_num, UART1_TXD, UART1_RXD, UART_RTS, UART_CTS));
 }
 
-void uart0_send(uint8_t *data, uint16_t length) {
-  uart_write_bytes(UART0_PORT_NUM, (const char *) data, length);
+void uart1_send(const char *data, uint16_t length) {
+  uart_write_bytes(UART1_PORT_NUM, data, length);
 }
 
-uint16_t uart0_receive(uint8_t *data, uint16_t length) {
-  return uart_read_bytes(UART0_PORT_NUM, data, length, 2);
+uint16_t uart1_receive(uint8_t *data, uint16_t length) {
+  return uart_read_bytes(UART1_PORT_NUM, data, length, 2);
+}
+
+void uart2_send(const char *data, uint16_t length) {
+  uart_write_bytes(UART2_PORT_NUM, data, length);
+}
+
+uint16_t uart2_receive(uint8_t *data, uint16_t length) {
+  return uart_read_bytes(UART2_PORT_NUM, data, length, 2);
 }

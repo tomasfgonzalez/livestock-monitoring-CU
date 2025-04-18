@@ -28,19 +28,28 @@ extern "C" {
 #include "driver/uart.h"
 
 /* Macros --------------------------------------------------------------------*/
-#define UART0_TXD             1
-#define UART0_RXD             3
-#define UART0_RTS             UART_PIN_NO_CHANGE
-#define UART0_CTS             UART_PIN_NO_CHANGE
+#define UART1_PORT_NUM       UART_NUM_1
+#define UART1_TXD             17
+#define UART1_RXD             16
 
-#define UART0_PORT_NUM        1
-#define UART0_BAUD_RATE       9600
-#define UART0_TASK_STACK_SIZE 2048
+#define UART2_PORT_NUM       UART_NUM_2
+#define UART2_TXD            -1
+#define UART2_RXD            -1
+
+#define UART_RTS             UART_PIN_NO_CHANGE
+#define UART_CTS             UART_PIN_NO_CHANGE
+
+#define UART_BAUD_RATE       115200
+#define UART_TASK_STACK_SIZE 2048
 
 /* Function prototypes -------------------------------------------------------*/
-void uart0_init(uint16_t buf_size);
-void uart0_send(uint8_t *data, uint16_t length);
-uint16_t uart0_receive(uint8_t *data, uint16_t length);
+void uart_init(uint16_t buf_size, uint8_t port_num);
+
+void uart1_send(const char *data, uint16_t length);
+uint16_t uart1_receive(uint8_t *data, uint16_t length);
+
+void uart2_send(const char *data, uint16_t length);
+uint16_t uart2_receive(uint8_t *data, uint16_t length);
 
 #ifdef __cplusplus
 }
