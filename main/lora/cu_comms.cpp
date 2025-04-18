@@ -52,14 +52,14 @@ void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destina
   create_config_payload(config_package);
   if (config_payload.length() >= TX_BUFF_SIZE) {
     ESP_LOGE(CU_COMMS_TAG, "Config message too long");
-		return;
-	}
+    return;
+  }
 
-	memset(tx_buff, 0, sizeof(TX_BUFF_SIZE));
-	snprintf(tx_buff, TX_BUFF_SIZE, AT"SEND=%lu,%u,%s"END, destination, config_payload.length(), config_payload.c_str());
-	
-	ESP_LOGI(CU_COMMS_TAG, "Sending config package: %s", tx_buff);
-	rylr998_sendCommand(tx_buff);
-	vTaskDelay(pdMS_TO_TICKS(500));
-	rylr998_getCommand(RYLR_OK);
+  memset(tx_buff, 0, TX_BUFF_SIZE);
+  snprintf(tx_buff, TX_BUFF_SIZE, AT"SEND=%lu,%u,%s"END, destination, config_payload.length(), config_payload.c_str());
+  
+  ESP_LOGI(CU_COMMS_TAG, "Sending config package: %s", tx_buff);
+  rylr998_sendCommand(tx_buff);
+  vTaskDelay(pdMS_TO_TICKS(500));
+  rylr998_getCommand(RYLR_OK);
 }
