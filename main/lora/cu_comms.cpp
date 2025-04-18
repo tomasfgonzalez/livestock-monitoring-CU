@@ -33,25 +33,25 @@ std::string config_payload;
 /* Private functions ----------------------------------------------------- */
 void create_config_payload(LSU_config_package_t *config_package) {
   config_payload = "CONFIG";
-	config_payload += "-" + std::to_string(config_package->lsu_id);
-	config_payload += "-" + std::to_string(config_package->period_ms);
-	config_payload += "-" + std::to_string(config_package->time_slot_ms);
+  config_payload += "-" + std::to_string(config_package->lsu_id);
+  config_payload += "-" + std::to_string(config_package->period_ms);
+  config_payload += "-" + std::to_string(config_package->time_slot_ms);
 }
 
 /* Public functions ----------------------------------------------------- */
 void CU_sendTest() {
-	memset(tx_buff, 0, sizeof(TX_BUFF_SIZE));
-	snprintf(tx_buff, TX_BUFF_SIZE, AT "SEND=1,4,TEST" END);
+  memset(tx_buff, 0, TX_BUFF_SIZE);
+  snprintf(tx_buff, TX_BUFF_SIZE, AT "SEND=1,4,TEST" END);
 
-	rylr998_sendCommand(tx_buff);
-	vTaskDelay(pdMS_TO_TICKS(500));
-	rylr998_getCommand(RYLR_OK);
+  rylr998_sendCommand(tx_buff);
+  vTaskDelay(pdMS_TO_TICKS(500));
+  rylr998_getCommand(RYLR_OK);
 }
 
 void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destination) {
-	create_config_payload(config_package);
-	if (config_payload.length() >= TX_BUFF_SIZE) {
-		ESP_LOGE(CU_COMMS_TAG, "Config message too long");
+  create_config_payload(config_package);
+  if (config_payload.length() >= TX_BUFF_SIZE) {
+    ESP_LOGE(CU_COMMS_TAG, "Config message too long");
 		return;
 	}
 
