@@ -91,20 +91,8 @@ void rylr998_setChannel(uint8_t ch,uint8_t address);
 void rylr998_config(const RYLR_config_t *config_handler);
 
 
-void rylr998_getCommand(RYLR_RX_command_t cmd,uint8_t *rx_buff,uint8_t RX_BUFFER_SIZE);
+void rylr998_getCommand(RYLR_RX_command_t cmd);
 void rylr998_sendCommand(const char *cmd);
-
-//Tx LSU
-void LSU_sendParameters(uint16_t destination,int32_t Lat,int32_t Lon,uint16_t T1,uint16_t T2,uint8_t bpm);
-void LSU_sendSyncRequest(uint16_t destination);
-
-// Tx CU
-void CU_sendConfigPackage();
-
-//Rx
-RYLR_RX_command_t rylr998_prase_reciver(uint8_t *pBuff,uint8_t RX_BUFFER_SIZE);
-RYLR_RX_command_t rylr998_ResponseFind(const char *rxBuffer);
-
 
 //IRQ
 void rylr998_SetInterruptFlag(uint8_t val);

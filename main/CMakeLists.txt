@@ -1,2 +1,15 @@
-idf_component_register(SRCS "uart.c" "rylr998.c" "main.cpp" "rx_buff.c"
-                    INCLUDE_DIRS ".")
+idf_component_register(
+  SRCS
+  "lsu-management/LSUManager.cpp"
+  "lsu-management/LSU.cpp"
+  "lora/rylr998.c"
+  "lora/cu_comms.cpp"
+  "request_queue.cpp"
+  "uart.c"
+  "main.cpp"
+  "rx_buff.c"
+  INCLUDE_DIRS
+  "lsu-management"
+  "lora"
+  "."
+)
