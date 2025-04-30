@@ -25,4 +25,4 @@ class LSU {
     void setLastConnectionTime(time_t time) { lastConnectionTime = time; };
 };
 
-#endif // LSU_H
+#endif /* LSU_H */

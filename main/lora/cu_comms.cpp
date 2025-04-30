@@ -39,13 +39,16 @@ void create_config_payload(LSU_config_package_t *config_package) {
 }
 
 /* Public functions ----------------------------------------------------- */
+static uint8_t test_count = 0;
 void CU_sendTest() {
   memset(tx_buff, 0, TX_BUFF_SIZE);
   snprintf(tx_buff, TX_BUFF_SIZE, AT "SEND=1,4,TEST" END);
 
-  rylr998_sendCommand(tx_buff);
+  UartPort_t port = test_count % 2 == 0 ? UART_PORT_MAIN : UART_PORT_AUX;
+  rylr998_sendCommand(tx_buff, port);
   vTaskDelay(pdMS_TO_TICKS(500));
-  rylr998_getCommand(RYLR_OK);
+  rylr998_getCommand(RYLR_OK, port);
+  test_count++;
 }
 
 void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destination) {
@@ -59,7 +62,7 @@ void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destina
   snprintf(tx_buff, TX_BUFF_SIZE, AT"SEND=%lu,%u,%s"END, destination, config_payload.length(), config_payload.c_str());
   
   ESP_LOGI(CU_COMMS_TAG, "Sending config package: %s", tx_buff);
-  rylr998_sendCommand(tx_buff);
+  rylr998_sendCommand(tx_buff, UART_PORT_AUX);
   vTaskDelay(pdMS_TO_TICKS(500));
-  rylr998_getCommand(RYLR_OK);
+  rylr998_getCommand(RYLR_OK, UART_PORT_AUX);
 }

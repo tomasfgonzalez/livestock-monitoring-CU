@@ -15,8 +15,7 @@ extern "C" {
 
 #include "esp_system.h"
 #include "esp_log.h"
-#include "driver/uart.h"
-
+#include "uart.h"
 
 #define END "\r\n"
 #define AT "AT+"
@@ -87,16 +86,14 @@ typedef struct {
 extern RYLR_RX_data_t rx_packet;
 
 //Tx CFG
-void rylr998_setChannel(uint8_t ch,uint8_t address);
-void rylr998_config(const RYLR_config_t *config_handler);
+void rylr998_setChannel(uint8_t ch,uint8_t address, UartPort_t port);
 
-
-void rylr998_getCommand(RYLR_RX_command_t cmd);
-void rylr998_sendCommand(const char *cmd);
+RYLR_RX_data_t* rylr998_getCommand(RYLR_RX_command_t cmd, UartPort_t port);
+void rylr998_sendCommand(const char *cmd, UartPort_t port);
 
 //IRQ
-void rylr998_SetInterruptFlag(uint8_t val);
-uint8_t rylr998_GetInterruptFlag(void);
+void rylr998_SetInterruptFlag(uint8_t val, UartPort_t port);
+uint8_t rylr998_GetInterruptFlag(UartPort_t port);
 
 
 

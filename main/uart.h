@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __UART0_H
-#define __UART0_H
+#ifndef __UART_H
+#define __UART_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,8 +33,8 @@ extern "C" {
 #define UART1_RXD             16
 
 #define UART2_PORT_NUM       UART_NUM_2
-#define UART2_TXD            -1
-#define UART2_RXD            -1
+#define UART2_TXD            27
+#define UART2_RXD            26
 
 #define UART_RTS             UART_PIN_NO_CHANGE
 #define UART_CTS             UART_PIN_NO_CHANGE
@@ -42,17 +42,25 @@ extern "C" {
 #define UART_BAUD_RATE       115200
 #define UART_TASK_STACK_SIZE 2048
 
+#define UART_RX_BUFF_SIZE    128
+
+/* Structs -------------------------------------------------------------------*/
+typedef enum {
+  UART_PORT_MAIN = 0,
+  UART_PORT_AUX = 1,
+} UartPort_t;
+
 /* Function prototypes -------------------------------------------------------*/
-void uart_init(uint16_t buf_size, uint8_t port_num);
+void uart_init(void);
 
-void uart1_send(const char *data, uint16_t length);
-uint16_t uart1_receive(uint8_t *data, uint16_t length);
+void uart_send(const char *data, uint16_t length, UartPort_t port);
 
-void uart2_send(const char *data, uint16_t length);
-uint16_t uart2_receive(uint8_t *data, uint16_t length);
+uint16_t uart_receive(UartPort_t port);
+
+uint8_t* uart_get_rx_buff(UartPort_t port);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __UART0_H */
+#endif /* __UART_H */

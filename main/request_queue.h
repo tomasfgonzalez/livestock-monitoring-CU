@@ -15,6 +15,9 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   */
 
+#ifndef REQUEST_QUEUE_H
+#define REQUEST_QUEUE_H
+
 /* Includes ------------------------------------------------------------ */
 #include <queue>
 #include <string>
@@ -26,9 +29,10 @@ enum RequestType {
 };
 
 struct Request {
-  uint32_t from_id;
+  uint16_t from_id;
   RequestType type;
   std::string data;
+  uint32_t timestamp;
 };
 
 /* Public API ---------------------------------------------------------- */
@@ -36,8 +40,9 @@ struct Request {
  * @brief Post a request to the queue
  * 
  * @param data 
+ * @param from_id
  */
-void post_request(std::string data);
+void post_request(std::string data, uint16_t from_id);
 
 /**
  * @brief Get a request from the queue
@@ -45,3 +50,5 @@ void post_request(std::string data);
  * @return Request* 
  */ 
 Request* get_request();
+
+#endif /* REQUEST_QUEUE_H */
