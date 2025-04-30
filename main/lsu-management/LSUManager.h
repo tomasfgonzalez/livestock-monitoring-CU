@@ -89,4 +89,4 @@ class LSUManager {
     size_t getLSUCount() const { return connectedLSUs.size(); }
 };
 
-#endif // LSU_MANAGER_H
+#endif /* LSU_MANAGER_H */

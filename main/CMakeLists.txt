@@ -4,12 +4,14 @@ idf_component_register(
   "lsu-management/LSU.cpp"
   "lora/rylr998.c"
   "lora/cu_comms.cpp"
+  "tasks/rx_channel.cpp"
+  "tasks/process_requests.cpp"
   "request_queue.cpp"
   "uart.c"
   "main.cpp"
-  "rx_buff.c"
   INCLUDE_DIRS
   "lsu-management"
   "lora"
+  "tasks"
   "."
 )

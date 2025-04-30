@@ -18,34 +18,23 @@
 /* Includes ------------------------------------------------------------ */
 #include "request_queue.h"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
 
 /* Private variables --------------------------------------------------------- */
 static const char *REQUEST_QUEUE_TAG = "RQ_QUEUE";
 std::queue<Request*> RequestQueue;
 
 /* Functions ------------------------------------------------------------ */
-void post_request(std::string data) {
+void post_request(std::string data, uint16_t from_id) {
   // Validate the format of the data
-  size_t first_comma = data.find(',');
-  if (first_comma == std::string::npos) {
-    ESP_LOGE(REQUEST_QUEUE_TAG, "Invalid format, no first comma");
-    return;
-  }
-  size_t second_comma = data.find(',', first_comma + 1);
-  if (second_comma == std::string::npos) {
-    ESP_LOGE(REQUEST_QUEUE_TAG, "Invalid format, no second comma");
-    return;
-  }
 
   // TODO: Add error handling try/catch
 
-  uint32_t from_id = std::stoi(data.substr(0, first_comma));
-  std::string payload = data.substr(second_comma + 1);
-
   Request* request = new Request({
     from_id,
-    (payload.starts_with("SYNC")) ? REQUEST_TYPE_SYNC : REQUEST_TYPE_DATA,
-    payload
+    (data.starts_with("SYNC")) ? REQUEST_TYPE_SYNC : REQUEST_TYPE_DATA,
+    data,
+    xTaskGetTickCount()
   });
   RequestQueue.push(request);
 }
