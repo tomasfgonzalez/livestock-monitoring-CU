@@ -49,4 +49,10 @@ void CU_sendTest();
  */
 void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destination);
 
+/**
+ * @brief Send a data acknowledgement to the LSU
+ * @param destination: The destination address of the LSU
+ */
+void CU_sendDataAck(uint32_t destination);
+
 #endif /* CU_COMMS_H */

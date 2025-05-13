@@ -27,7 +27,7 @@ extern "C" void app_main(void) {
 
   // Configure channels
   rylr998_setChannel(1, 0x01, main_port);
-  rylr998_setChannel(0, 0x11, aux_port);;
+  rylr998_setChannel(0, 0x01, aux_port);;
   while (1) {
     printf("--------------------------------\n");
     // ESP_LOGI(MAIN_TAG, "Sending config package");

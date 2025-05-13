@@ -8,6 +8,6 @@
 
 #include "LSU.h"
 
-LSU::LSU(uint32_t lsuId) : id(lsuId) {
+LSU::LSU(uint32_t lsuId, uint32_t timeSlotInPeriod) : id(lsuId), timeSlotInPeriod(timeSlotInPeriod) {
   lastConnectionTime = time(nullptr);
 }
