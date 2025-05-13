@@ -11,6 +11,7 @@
 #define GENERAL_CONFIG_H
 
 /* Defines -------------------------------------------------------------------*/
+#define CU_ADDRESS 0x00
 #define TIME_PERIOD_MS 20000 // 20 seconds
 #define MAX_LSU_COUNT 100
 

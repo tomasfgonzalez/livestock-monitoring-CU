@@ -19,7 +19,7 @@ static const char *LSU_MANAGER_TAG = "LSU Manager";
 
 /* Helper functions ----------------------------------------------------------*/
 uint32_t LSUManager::generateLSUId() {
-    static uint32_t nextId = 0;
+    static uint32_t nextId = 0x02; // Start at 0x02 to avoid conflict with CU
     ESP_LOGI(LSU_MANAGER_TAG, "Generating LSU ID: %lu", nextId);
     return nextId++;
 }
