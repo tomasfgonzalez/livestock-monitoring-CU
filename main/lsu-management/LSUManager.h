@@ -47,6 +47,8 @@ class LSUManager {
      */
     uint32_t generateLSUId();
 
+    uint32_t generateTimeSlot();
+
   public:
     LSUManager() {}
 

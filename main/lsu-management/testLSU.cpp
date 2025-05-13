@@ -20,6 +20,7 @@
 void displayLSUInfo(LSU* lsu) {
     if (lsu) {
         std::cout << "LSU ID: " << lsu->getId() << std::endl;
+        std::cout << "LSU Time Slot: " << lsu->getTimeSlotInPeriod() << std::endl;
         std::cout << "Last Connection Time: " << lsu->getLastConnectionTime() << std::endl;
         std::cout << "------------------------" << std::endl;
     } else {

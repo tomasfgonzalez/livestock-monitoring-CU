@@ -15,12 +15,14 @@
 class LSU {
   private:
     uint32_t id;
+    uint32_t timeSlotInPeriod;
     time_t lastConnectionTime;
 
   public:
-    LSU(uint32_t lsuId);
-    
+    LSU(uint32_t lsuId, uint32_t timeSlotInPeriod);
+
     uint32_t getId() const {return id;};
+    uint32_t getTimeSlotInPeriod() const {return timeSlotInPeriod;};
     time_t getLastConnectionTime() { return lastConnectionTime; };
     void setLastConnectionTime(time_t time) { lastConnectionTime = time; };
 };

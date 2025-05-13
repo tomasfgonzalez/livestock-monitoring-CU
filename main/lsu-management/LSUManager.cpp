@@ -8,20 +8,67 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "LSUManager.h"
+
+#include <algorithm>
 #include "LSU.h"
-#include <iostream>
+#include "general_config.h"
+#include "esp_log.h"
+
+/* Private variables --------------------------------------------------------- */
+static const char *LSU_MANAGER_TAG = "LSU Manager";
 
 /* Helper functions ----------------------------------------------------------*/
 uint32_t LSUManager::generateLSUId() {
-    static uint32_t nextId = 0;
-    std::cout << "Generating LSU ID: " << nextId << std::endl;
+    static uint32_t nextId = 0x02; // Start at 0x02 to avoid conflict with CU
+    ESP_LOGI(LSU_MANAGER_TAG, "Generating LSU ID: %lu", nextId);
     return nextId++;
+}
+
+uint32_t LSUManager::generateTimeSlot() {
+    // If no LSUs exist, start with slot 0
+    if (connectedLSUs.empty()) {
+        return 0;
+    }
+
+    std::vector<uint32_t> existingSlots;
+    for (const auto& lsu : connectedLSUs) {
+        existingSlots.push_back(lsu.second->getTimeSlotInPeriod());
+    }
+    std::sort(existingSlots.begin(), existingSlots.end());
+    
+    // Find the largest gap in the circular period
+    uint32_t maxGap = 0;
+    uint32_t bestSlot = -1;
+    uint32_t n = existingSlots.size();
+    for (uint32_t index = 0; index < n; index++) {
+        uint32_t current = existingSlots[index];
+        uint32_t next = existingSlots[(index + 1) % n];
+        
+        // Handle circular wrap-around
+        uint32_t gap = (next - current);
+        if (index == n - 1) {
+            gap += TIME_PERIOD_MS;
+        }
+        
+        if (gap > maxGap) {
+            maxGap = gap;
+            bestSlot = (current + gap / 2) % TIME_PERIOD_MS;
+        }
+    }
+    ESP_LOGI(LSU_MANAGER_TAG, "Generating time slot: %lu", bestSlot);
+    return bestSlot;
 }
 
 /* Function implementations -------------------------------------------------*/
 std::pair<LSU*, bool> LSUManager::createLSU() {
+    if (connectedLSUs.size() >= MAX_LSU_COUNT) {
+        ESP_LOGE(LSU_MANAGER_TAG, "Failed to create LSU. Max LSU count reached.");
+        return std::make_pair(nullptr, false);
+    }
+
     uint32_t lsuId = generateLSUId();
-    LSU* newLSU = new LSU(lsuId);
+    uint32_t timeSlotInPeriod = generateTimeSlot();
+    LSU* newLSU = new LSU(lsuId, timeSlotInPeriod);
     
     auto result = connectedLSUs.insert(std::make_pair(lsuId, newLSU));
     

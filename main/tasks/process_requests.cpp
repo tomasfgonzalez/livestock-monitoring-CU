@@ -13,6 +13,7 @@
 #include "request_queue.h"
 #include "esp_log.h"
 #include "cu_comms.h"
+#include "general_config.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -26,18 +27,26 @@ void process_sync_request(Request* request, LSUManager& manager) {
   if (success) {
     ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "LSU created successfully");
     uint32_t lsu_id = lsu->getId();             // ID assigned to the LSU
+    uint32_t lsu_time_slot = lsu->getTimeSlotInPeriod();
     uint32_t lsu_id_to_send = request->from_id; // old ID of the sender, loses meaning after sync
 
-    // TODO: Set actual params
     LSU_config_package_t config_package(
       lsu_id,
-      5400,
-      1800000
+      lsu_time_slot,
+      TIME_PERIOD_MS
     );
     CU_sendConfigPackage(&config_package, lsu_id_to_send);
   } else {
     ESP_LOGW(PROCESS_REQUEST_TASK_TAG, "Failed to create LSU");
   }
+}
+
+void process_data_request(Request* request, LSUManager& manager) {
+  uint32_t lsu_id = request->from_id;
+
+  CU_sendDataAck(lsu_id);
+  manager.keepaliveLSU(lsu_id);
+  ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Received data from LSU %lu: %s", lsu_id, request->data.c_str());
 }
 
 /* Functions ------------------------------------------------------------ */
@@ -59,8 +68,8 @@ void process_requests_task(void *arg) {
           break;
         }
         case REQUEST_TYPE_DATA: {
-          ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Data request received: %s", request->data.c_str());
-          // Handle data request
+          ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Data request received");
+          process_data_request(request, manager);
           break;
         }
 

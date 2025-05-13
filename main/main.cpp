@@ -26,8 +26,8 @@ extern "C" void app_main(void) {
   xTaskCreate(process_requests_task, "process_request_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL);
 
   // Configure channels
-  rylr998_setChannel(1, 0x01, main_port);
-  rylr998_setChannel(0, 0x11, aux_port);;
+  rylr998_setChannel(1, CU_ADDRESS, main_port);
+  rylr998_setChannel(0, CU_ADDRESS, aux_port);;
   while (1) {
     printf("--------------------------------\n");
     // ESP_LOGI(MAIN_TAG, "Sending config package");
