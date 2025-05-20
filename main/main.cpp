@@ -9,6 +9,10 @@
 #include "esp_log.h"
 #include "tasks/rx_channel.h"
 #include "tasks/process_requests.h"
+#include "nvs_flash.h"
+#include "wi-fi/wifi.h"
+#include "wi-fi/mqtt_api.h"
+#include "esp_ping.h"
 
 extern "C" void app_main(void) {
   static const char *MAIN_TAG = "App";
@@ -16,7 +20,13 @@ extern "C" void app_main(void) {
 
   // Init peripherals
   uart_init();
+  nvs_flash_init();
+  wifi_init_sta();
   ESP_LOGI(MAIN_TAG, "UART initialized");
+
+  // Init external connectivity
+  wifi_start();
+  mqtt_api_init();
 
   // Start tasks
   static UartPort_t main_port = UART_PORT_MAIN;
@@ -32,6 +42,7 @@ extern "C" void app_main(void) {
     printf("--------------------------------\n");
     // ESP_LOGI(MAIN_TAG, "Sending config package");
     // CU_sendTest();
+    // mqtt_api_publish("demo/room1", "Test!");
     vTaskDelay(pdMS_TO_TICKS(3000));
   }
 }
