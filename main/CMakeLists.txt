@@ -6,6 +6,9 @@ idf_component_register(
   "lora/cu_comms.cpp"
   "tasks/rx_channel.cpp"
   "tasks/process_requests.cpp"
+  "wi-fi/wifi.c"
+  "wi-fi/MQTTClient.cpp"
+  "wi-fi/mqtt_api.cpp"
   "request_queue.cpp"
   "uart.c"
   "main.cpp"
@@ -13,5 +16,8 @@ idf_component_register(
   "lsu-management"
   "lora"
   "tasks"
+  "wi-fi"
   "."
 )
+
+set(EXTRA_COMPONENT_DIRS $ENV{IDF_PATH}/examples/common_components/protocol_examples_common)
