@@ -20,7 +20,7 @@
 
 /* Defines --------------------------------------------------------------- */
 #define BROKER_IP "192.168.30.70"
-#define BROKER_PORT 1883
+#define BROKER_PORT "1883"
 
 /* Function declarations ----------------------------------------------------*/
 void mqtt_api_init();

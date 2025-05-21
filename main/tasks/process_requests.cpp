@@ -14,6 +14,7 @@
 #include "esp_log.h"
 #include "cu_comms.h"
 #include "general_config.h"
+#include "wi-fi/mqtt_api.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -47,6 +48,9 @@ void process_data_request(Request* request, LSUManager& manager) {
   CU_sendDataAck(lsu_id);
   manager.keepaliveLSU(lsu_id);
   ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Received data from LSU %lu: %s", lsu_id, request->data.c_str());
+
+  std::string topic = "livestock/" + std::to_string(lsu_id);
+  mqtt_api_publish(topic.c_str(), request->data.c_str());
 }
 
 /* Functions ------------------------------------------------------------ */

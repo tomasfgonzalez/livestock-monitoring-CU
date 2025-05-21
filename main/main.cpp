@@ -4,6 +4,7 @@
 #include <freertos/mpu_wrappers.h>
 #include <freertos/projdefs.h>
 
+#include "general_config.h"
 #include "uart.h"
 #include "rylr998.h"
 #include "esp_log.h"
