@@ -30,9 +30,9 @@ static const std::string RX_CHANNEL_TASK_TAG_PREFIX = "RX_CHANNEL_TASK";
 void rx_channel_task(void *arg) {
   UartPort_t uart_port = *(UartPort_t*)arg;
 
-  static const std::string suffix = uart_port == UART_PORT_MAIN ? "MAIN" : "AUX";
-  static const std::string RX_CHANNEL_TASK_TAG_FULL = RX_CHANNEL_TASK_TAG_PREFIX + "_" + suffix;
-  static const char *RX_CHANNEL_TASK_TAG = RX_CHANNEL_TASK_TAG_FULL.c_str();
+  const std::string suffix = uart_port == UART_PORT_MAIN ? "MAIN" : "AUX";
+  const std::string RX_CHANNEL_TASK_TAG_FULL = RX_CHANNEL_TASK_TAG_PREFIX + "_" + suffix;
+  const char *RX_CHANNEL_TASK_TAG = RX_CHANNEL_TASK_TAG_FULL.c_str();
 
   ESP_LOGI(RX_CHANNEL_TASK_TAG, "RX task started for port %d", uart_port);
 

@@ -21,14 +21,14 @@
 
 /* Defines --------------------------------------------------------------- */
 static const char *MQTT_API_TAG = "MQTT_API";
-static const char *BROKER_URI = "mqtt://" BROKER_IP ":" BROKER_PORT;
+static const char *MQTT_BROKER_URI = "mqtt://" MQTT_BROKER_IP ":" MQTT_BROKER_PORT;
 
 /* Variables ------------------------------------------------------------- */
 static piral::MQTTClient* mqtt = nullptr;
 
 /* Function implementations -------------------------------------------------*/
 void mqtt_api_init() {
-  mqtt = new piral::MQTTClient(BROKER_URI);
+  mqtt = new piral::MQTTClient(MQTT_BROKER_URI);
   mqtt->begin();
 }
 

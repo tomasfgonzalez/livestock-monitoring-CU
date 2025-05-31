@@ -22,13 +22,6 @@
 #include "esp_log.h"
 #include <esp_mqtt.hpp>
 
-/* Defines --------------------------------------------------------------- */
-#define MQTT_TOPIC_SENSOR "lsu-data"
-
-#define MQTT_CLIENT_ID "cu-01"
-
-#define MQTT_BROKER_IP "192.168.30.70"
-#define MQTT_BROKER_PORT 1883
 
 /* MQTT Client Class ----------------------------------------------------- */
 namespace piral {
