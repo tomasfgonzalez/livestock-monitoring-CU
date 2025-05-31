@@ -1,2 +1,5 @@
 dependencies:
   espressif/esp_mqtt_cxx: ^0.4.0
+  lvgl/lvgl: 8.3.0
+  esp_lvgl_port: ^1
+  tny-robotics/sh1106-esp-idf: ==1.*

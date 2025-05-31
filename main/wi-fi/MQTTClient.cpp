@@ -17,9 +17,12 @@
 /* Includes -------------------------------------------------------------- */
 #include "MQTTClient.h"
 
+#include "display/status.h"
+#include "esp_log.h"
+
 /* Defines --------------------------------------------------------------- */
 static const char *MQTT_TAG = "MQTT";
-static  esp_mqtt_client_handle_t client = NULL;
+static esp_mqtt_client_handle_t client = NULL;
 
 /* Function implementations -------------------------------------------------*/
 piral::MQTTClient::MQTTClient(const char *broker_uri, const char *client_id)
@@ -27,6 +30,7 @@ piral::MQTTClient::MQTTClient(const char *broker_uri, const char *client_id)
 
 void piral::MQTTClient::on_connected(const esp_mqtt_event_handle_t) {
   ESP_LOGI(MQTT_TAG, "MQTT connected ✅");
+  update_mqtt_status((char *)"Online");
   publish_data("piral/ecu/online", {"true"});
 }
 

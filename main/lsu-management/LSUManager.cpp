@@ -13,6 +13,7 @@
 #include "LSU.h"
 #include "general_config.h"
 #include "esp_log.h"
+#include "display/status.h"
 
 /* Private variables --------------------------------------------------------- */
 static const char *LSU_MANAGER_TAG = "LSU Manager";
@@ -71,6 +72,7 @@ std::pair<LSU*, bool> LSUManager::createLSU() {
     LSU* newLSU = new LSU(lsuId, timeSlotInPeriod);
     
     auto result = connectedLSUs.insert(std::make_pair(lsuId, newLSU));
+    update_lsu_count(connectedLSUs.size());
     
     if (result.second) {
         // Add timeout event for the new LSU
@@ -86,6 +88,7 @@ bool LSUManager::removeLSU(uint32_t lsuId) {
     auto it = connectedLSUs.find(lsuId);
     if (it != connectedLSUs.end()) {
         connectedLSUs.erase(it);
+        update_lsu_count(connectedLSUs.size());
         return true;
     }
     return false; // LSU not found
