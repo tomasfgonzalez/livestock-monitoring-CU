@@ -21,6 +21,8 @@
 #include "esp_event.h"
 #include "esp_log.h"
 
+#include "display/status.h"
+
 static const char *WIFI_TAG = "Wi-Fi";
 static EventGroupHandle_t wifi_event_group;
 static esp_netif_t *sta_netif = NULL;
@@ -31,10 +33,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
     esp_wifi_connect();
   } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
     esp_wifi_connect();
+    update_wifi_status("Offline");
     ESP_LOGI(WIFI_TAG, "Retrying connection…");
   } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
     ip_event_got_ip_t* event = event_data;
     ESP_LOGI(WIFI_TAG, "Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
+    update_wifi_status("Online");
     xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
   }
 }
@@ -83,7 +87,9 @@ void wifi_start() {
   
   if (bits & WIFI_CONNECTED_BIT) {
     ESP_LOGI(WIFI_TAG, "We are online 🎉");
+    update_wifi_status("Online");
   } else {
     ESP_LOGE(WIFI_TAG, "We are offline 💀");
+    update_wifi_status("Offline");
   }
 }

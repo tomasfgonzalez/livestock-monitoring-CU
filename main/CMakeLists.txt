@@ -1,11 +1,14 @@
 idf_component_register(
   SRCS
+  "display/oled.c"
+  "display/status.c"
   "lsu-management/LSUManager.cpp"
   "lsu-management/LSU.cpp"
   "lora/rylr998.c"
   "lora/cu_comms.cpp"
   "tasks/rx_channel.cpp"
   "tasks/process_requests.cpp"
+  "tasks/server_connection.cpp"
   "wi-fi/wifi.c"
   "wi-fi/MQTTClient.cpp"
   "wi-fi/mqtt_api.cpp"
