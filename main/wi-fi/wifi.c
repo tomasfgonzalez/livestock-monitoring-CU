@@ -34,6 +34,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
   } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
     esp_wifi_connect();
     update_wifi_status("Offline");
+    wifi_event_sta_disconnected_t *disc = (wifi_event_sta_disconnected_t*) event_data;
+    ESP_LOGW("Wi-Fi", "Disconnected, reason=%d", disc->reason);
     ESP_LOGI(WIFI_TAG, "Retrying connection…");
   } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
     ip_event_got_ip_t* event = event_data;
