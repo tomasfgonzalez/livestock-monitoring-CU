@@ -35,6 +35,7 @@ void create_config_payload(LSU_config_package_t *config_package) {
   config_payload = "CONFIG";
   config_payload += "-" + std::to_string(config_package->lsu_id);
   config_payload += "-" + std::to_string(config_package->period_ms);
+  config_payload += "-" + std::to_string(config_package->now_ms);
   config_payload += "-" + std::to_string(config_package->time_slot_ms);
 }
 

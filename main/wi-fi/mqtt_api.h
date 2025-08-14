@@ -19,7 +19,7 @@
 #define MQTT_API_H
 
 /* Defines --------------------------------------------------------------- */
-#define MQTT_BROKER_IP "192.168.16.70"
+#define MQTT_BROKER_IP "192.168.1.70"
 #define MQTT_BROKER_PORT "1883"
 
 /* Function declarations ----------------------------------------------------*/

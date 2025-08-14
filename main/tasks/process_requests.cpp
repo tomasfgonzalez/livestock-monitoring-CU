@@ -12,6 +12,7 @@
 #include "LSUManager.h"
 #include "request_queue.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "cu_comms.h"
 #include "general_config.h"
 #include "wi-fi/mqtt_api.h"
@@ -31,10 +32,14 @@ void process_sync_request(Request* request, LSUManager& manager) {
     uint32_t lsu_time_slot = lsu->getTimeSlotInPeriod();
     uint32_t lsu_id_to_send = request->from_id; // old ID of the sender, loses meaning after sync
 
+    int64_t time_since_boot_ms = esp_timer_get_time() / 1000;
+    uint32_t now_ms = time_since_boot_ms % TIME_PERIOD_MS;
+
     LSU_config_package_t config_package(
       lsu_id,
-      lsu_time_slot,
-      TIME_PERIOD_MS
+      TIME_PERIOD_MS,
+      now_ms,
+      lsu_time_slot
     );
     CU_sendConfigPackage(&config_package, lsu_id_to_send);
   } else {

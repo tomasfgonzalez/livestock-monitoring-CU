@@ -108,6 +108,7 @@ void oled_welcome() {
 }
 
 void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status) {
+  ESP_LOGI(OLED_TAG, "Status update");
   lv_obj_clean(lv_scr_act());
 
   // Create a label for WiFi status
