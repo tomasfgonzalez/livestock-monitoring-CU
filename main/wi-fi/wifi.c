@@ -42,6 +42,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
     ESP_LOGI(WIFI_TAG, "Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
     update_wifi_status("Online");
     xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
+  } else {
+    ESP_LOGW(WIFI_TAG, "Unknown event: %s, ID: %ld", event_base, event_id);
   }
 }
 

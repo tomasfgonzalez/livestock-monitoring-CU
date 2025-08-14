@@ -20,6 +20,9 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 
+/* Defines ------------------------------------------------------------ */
+#define WAIT_TIME_BEFORE_RESPONSE 1000 // 1 second in ticks
+
 /* Private variables --------------------------------------------------------- */
 static const char *REQUEST_QUEUE_TAG = "RQ_QUEUE";
 std::queue<Request*> RequestQueue;
@@ -43,7 +46,15 @@ Request* get_request() {
   if (RequestQueue.empty()) {
     return NULL;
   }
+
   Request* request = RequestQueue.front();
-  RequestQueue.pop();
-  return request;
+  uint32_t currentTick = xTaskGetTickCount();
+  uint32_t timeSinceRequest = currentTick - request->timestamp;
+
+  // Delay the response for at least 1 second since the request was posted
+  if (timeSinceRequest >= WAIT_TIME_BEFORE_RESPONSE) {
+    RequestQueue.pop();
+    return request;
+  }
+  return NULL;
 }
