@@ -25,6 +25,7 @@
 
 /* Private variables --------------------------------------------------------- */
 static const char *OLED_TAG = "OLED";
+static const char *heartbeat_icon = "<3";
 
 lv_disp_t *disp;
 
@@ -107,7 +108,7 @@ void oled_welcome() {
   lv_obj_align(label3, LV_ALIGN_TOP_LEFT, 5, 40);
 }
 
-void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status) {
+void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status, bool heartbeat_active) {
   ESP_LOGI(OLED_TAG, "Status update");
   lv_obj_clean(lv_scr_act());
 
@@ -125,4 +126,12 @@ void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status) {
   lv_obj_t *lsu_label = lv_label_create(lv_scr_act());
   lv_label_set_text(lsu_label, lsu_status);
   lv_obj_align(lsu_label, LV_ALIGN_TOP_LEFT, 10, 40);
+
+  // Draw heartbeat icon (small heart) at bottom left
+  if (heartbeat_active) {
+    // Create a simple filled circle as a heart indicator
+    lv_obj_t *heart_indicator = lv_label_create(lv_scr_act());
+    lv_label_set_text(heart_indicator, heartbeat_icon);
+    lv_obj_align(heart_indicator, LV_ALIGN_BOTTOM_RIGHT, -10, -10);
+  }
 }

@@ -17,6 +17,7 @@
 #include "tasks/rx_channel.h"
 #include "tasks/process_requests.h"
 #include "tasks/server_connection.h"
+#include "tasks/heartbeat.h"
 
 #include "wi-fi/wifi.h"
 #include "wi-fi/mqtt_api.h"
@@ -34,7 +35,7 @@ extern "C" void app_main(void) {
   push_status_to_oled();
 
   // Init connectivity
-  xTaskCreate(server_connection_task, "server_connection_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL);
+  xTaskCreate(server_connection_task, "server_connection_task", 1024 * 8, NULL, configMAX_PRIORITIES - 1, NULL);
 
   // Start tasks
   static UartPort_t main_port = UART_PORT_MAIN;
@@ -42,6 +43,7 @@ extern "C" void app_main(void) {
   xTaskCreate(rx_channel_task, "uart_main_rx_task", 1024 * 2, &main_port, configMAX_PRIORITIES - 2, NULL);
   xTaskCreate(rx_channel_task, "uart_aux_rx_task", 1024 * 2, &aux_port, configMAX_PRIORITIES - 2, NULL);
   xTaskCreate(process_requests_task, "process_request_task", 1024 * 4, NULL, configMAX_PRIORITIES - 2, NULL);
+  xTaskCreate(heartbeat_task, "heartbeat_task", 1024 * 4, NULL, configMAX_PRIORITIES - 3, NULL);
 
   // Configure channels
   rylr998_setChannel(1, CU_ADDRESS, main_port);

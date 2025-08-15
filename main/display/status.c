@@ -24,10 +24,11 @@
 char wifi_status[32] = "Wi-Fi: --";
 char mqtt_status[32] = "MQTT: --";
 char lsu_count[32] = "LSUs: 0";
+bool heartbeat_active = false;
 
 /* Public functions ----------------------------------------------------- */
 void push_status_to_oled() {
-  oled_status(wifi_status, mqtt_status, lsu_count);
+  oled_status(wifi_status, mqtt_status, lsu_count, heartbeat_active);
 }
 
 void update_wifi_status(char *status) {
@@ -42,5 +43,10 @@ void update_mqtt_status(char *status) {
 
 void update_lsu_count(int count) {
   sprintf(lsu_count, "LSUs: %d", count);
+  push_status_to_oled();
+}
+
+void update_heartbeat_status(bool is_active) {
+  heartbeat_active = is_active;
   push_status_to_oled();
 }

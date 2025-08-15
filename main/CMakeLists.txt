@@ -9,6 +9,7 @@ idf_component_register(
   "tasks/rx_channel.cpp"
   "tasks/process_requests.cpp"
   "tasks/server_connection.cpp"
+  "tasks/heartbeat.cpp"
   "wi-fi/wifi.c"
   "wi-fi/MQTTClient.cpp"
   "wi-fi/mqtt_api.cpp"

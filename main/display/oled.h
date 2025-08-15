@@ -22,6 +22,9 @@
 extern "C" {
 #endif
 
+/* Includes ------------------------------------------------------------------ */
+#include <stdbool.h>
+
 /* Defines ------------------------------------------------------------------- */
 #define I2C_BUS_PORT  0
 
@@ -57,9 +60,10 @@ void oled_welcome();
  * @param wifi_status: The status of the WiFi connection
  * @param mqtt_status: The status of the MQTT connection
  * @param lsu_status: The status of the LSU connection
+ * @param heartbeat_status: The status of the heartbeat indicator
  * @return None
  */
-void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status);
+void oled_status(char *wifi_status, char *mqtt_status, char *lsu_status, bool heartbeat_status);
 
 #ifdef __cplusplus
 }

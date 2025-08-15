@@ -18,6 +18,8 @@
 #ifndef STATUS_H
 #define STATUS_H
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +52,13 @@ void update_mqtt_status(char *status);
  * @return None
  */
 void update_lsu_count(int count);
+
+/**
+ * @brief Update the heartbeat status
+ * @param is_active: Boolean indicating if heartbeat is active
+ * @return None
+ */
+void update_heartbeat_status(bool is_active);
 
 #ifdef __cplusplus
 }
