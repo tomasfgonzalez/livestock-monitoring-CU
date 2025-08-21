@@ -23,7 +23,7 @@ class LSU {
 
     uint32_t getId() const {return id;};
     uint32_t getTimeSlotInPeriod() const {return timeSlotInPeriod;};
-    time_t getLastConnectionTime() { return lastConnectionTime; };
+    time_t getLastConnectionTime() const { return lastConnectionTime; };
     void setLastConnectionTime(time_t time) { lastConnectionTime = time; };
 };
 
