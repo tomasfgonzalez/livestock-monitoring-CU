@@ -10,6 +10,7 @@
 #include "LSUManager.h"
 
 #include <algorithm>
+#include <string>
 #include "LSU.h"
 #include "general_config.h"
 #include "esp_log.h"
@@ -87,6 +88,17 @@ std::pair<LSU*, bool> LSUManager::createLSU() {
 bool LSUManager::removeLSU(uint32_t lsuId) {
     auto it = connectedLSUs.find(lsuId);
     if (it != connectedLSUs.end()) {
+        // Publish device removal notification to MQTT before removing
+        uint32_t lsu_id = it->second->getId();
+        
+        // Publish device removal notification to MQTT
+        std::string topic = "livestock/" + std::to_string(lsu_id);
+        std::string payload = "Device manually removed - ID: " + std::to_string(lsu_id);
+        extern void mqtt_api_publish(const char *topic, const char *payload);
+        mqtt_api_publish(topic.c_str(), payload.c_str());
+        
+        ESP_LOGI(LSU_MANAGER_TAG, "Published device removal notification to MQTT for LSU %lu", lsu_id);
+        
         connectedLSUs.erase(it);
         update_lsu_count(connectedLSUs.size());
         return true;

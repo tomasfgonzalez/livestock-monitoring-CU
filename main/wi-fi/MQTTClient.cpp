@@ -24,6 +24,8 @@
 static const char *MQTT_TAG = "MQTT";
 static esp_mqtt_client_handle_t client = NULL;
 
+const char *CONNECTED_MESSAGE = "CU connected and ready";
+
 /* Function implementations -------------------------------------------------*/
 piral::MQTTClient::MQTTClient(const char *broker_uri, const char *client_id)
   : idf::mqtt::Client(make_cfg(broker_uri, client_id)) {}
@@ -32,6 +34,10 @@ void piral::MQTTClient::on_connected(const esp_mqtt_event_handle_t) {
   ESP_LOGI(MQTT_TAG, "MQTT connected ✅");
   update_mqtt_status((char *)"Online");
   publish_data("piral/ecu/online", {"true"});
+  
+  // Publish CU connection status to livestock/1
+  publish_data("livestock/1", CONNECTED_MESSAGE);
+  ESP_LOGI(MQTT_TAG, "Published CU connection status to livestock/1");
 }
 
 void piral::MQTTClient::on_data(const esp_mqtt_event_handle_t evt) {

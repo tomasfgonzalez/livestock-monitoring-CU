@@ -42,6 +42,15 @@ void process_sync_request(Request* request, LSUManager& manager) {
       lsu_time_slot
     );
     CU_sendConfigPackage(&config_package, lsu_id_to_send);
+    
+    // Publish device linking notification to MQTT
+    std::string topic = "livestock/" + std::to_string(lsu_id);
+    std::string payload = "Device linked with ID: " + std::to_string(lsu_id) + 
+                          ", Time slot: " + std::to_string(lsu_time_slot) + 
+                          ", Period: " + std::to_string(TIME_PERIOD_MS) + "ms";
+    mqtt_api_publish(topic.c_str(), payload.c_str());
+    
+    ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Published device link notification to MQTT topic: %s", topic.c_str());
   } else {
     ESP_LOGW(PROCESS_REQUEST_TASK_TAG, "Failed to create LSU");
   }
