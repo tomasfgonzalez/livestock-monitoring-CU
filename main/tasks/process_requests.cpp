@@ -72,6 +72,8 @@ void process_requests_task(void *arg) {
   ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Request processing task started");
 
   LSUManager manager;
+  uint32_t last_timeout_check = 0;
+  const uint32_t TIMEOUT_CHECK_INTERVAL_MS = 10000; // Check every 10 seconds
 
   while (1) {
     Request* request = get_request();
@@ -97,6 +99,14 @@ void process_requests_task(void *arg) {
           break;
       }
     }
+
+    // Check for LSU timeouts every 30 seconds
+    uint32_t current_time = esp_timer_get_time() / 1000; // Convert to milliseconds
+    if (current_time - last_timeout_check >= TIMEOUT_CHECK_INTERVAL_MS) {
+      manager.processTimeouts();
+      last_timeout_check = current_time;
+    }
+    
     vTaskDelay(pdMS_TO_TICKS(100));
   }
 }

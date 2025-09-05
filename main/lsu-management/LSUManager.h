@@ -14,17 +14,20 @@
 #include <queue>
 #include <vector>
 #include <functional>
-#include <ctime>
 #include <cstdint>
+#include "esp_timer.h"
 #include "LSU.h"
+#include "general_config.h"
 
 /* Macros -------------------------------------------------------------------*/
 #define DEFAULT_TIMEOUT_MS 5000
+#define LSU_TIMEOUT_MS (2 * TIME_PERIOD_MS)  // Two whole periods
+#define LSU_TIMEOUT_PADDING_MS 1000
 
 /* Structs -------------------------------------------------------------------*/
 struct TimeoutEvent {
   uint32_t lsuId;
-  time_t timeoutTime;
+  uint64_t timeoutTime; // microseconds since boot
   
   bool operator>(const TimeoutEvent& other) const {
     return timeoutTime > other.timeoutTime;

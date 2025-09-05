@@ -76,8 +76,9 @@ std::pair<LSU*, bool> LSUManager::createLSU() {
     update_lsu_count(connectedLSUs.size());
     
     if (result.second) {
-        // Add timeout event for the new LSU
-        TimeoutEvent event = {lsuId, time(nullptr) + DEFAULT_TIMEOUT_MS};
+        // Add timeout event for the new LSU (two whole periods)
+        uint64_t timeoutTime_us = esp_timer_get_time() + (LSU_TIMEOUT_MS + LSU_TIMEOUT_PADDING_MS) * 1000;
+        TimeoutEvent event = {lsuId, timeoutTime_us};
         timeoutQueue.push(event);
         return std::make_pair(newLSU, true);
     }
@@ -118,10 +119,11 @@ bool LSUManager::keepaliveLSU(uint32_t lsuId) {
     LSU* lsu = getLSU(lsuId);
 
     if (lsu != nullptr) {
-        time_t currentTime = time(nullptr);
-        lsu->setLastConnectionTime(currentTime);
+        uint64_t currentTime_us = esp_timer_get_time();
+        lsu->setLastConnectionTime(currentTime_us);
 
-        TimeoutEvent event = {lsuId, currentTime + DEFAULT_TIMEOUT_MS};
+        uint64_t timeoutTime_us = currentTime_us + (LSU_TIMEOUT_MS + LSU_TIMEOUT_PADDING_MS) * 1000;
+        TimeoutEvent event = {lsuId, timeoutTime_us};
         timeoutQueue.push(event);
         return true;
     }
@@ -129,7 +131,7 @@ bool LSUManager::keepaliveLSU(uint32_t lsuId) {
 }
 
 void LSUManager::processTimeouts() {
-    time_t currentTime = time(nullptr);
+    uint64_t currentTime = esp_timer_get_time();
 
     while (!timeoutQueue.empty() && timeoutQueue.top().timeoutTime <= currentTime) {
         TimeoutEvent event = timeoutQueue.top();
@@ -137,9 +139,24 @@ void LSUManager::processTimeouts() {
         
         LSU* lsu = getLSU(event.lsuId);
         if (lsu != nullptr) {
-            if (lsu->getLastConnectionTime() + DEFAULT_TIMEOUT_MS <= currentTime) {
-                // LSU has timed out, remove it
+            // Convert LSU_TIMEOUT_MS to microseconds for comparison
+            if (lsu->getLastConnectionTime() + (LSU_TIMEOUT_MS * 1000) <= currentTime) {
+                // LSU has timed out, send alert and remove it
+                uint32_t lsu_id = lsu->getId();
+                
+                // Send timeout alert to MQTT
+                std::string topic = "livestock/" + std::to_string(lsu_id);
+                std::string payload = "ALERT: Device timeout - LSU " + std::to_string(lsu_id) + 
+                                      " has not communicated for " + std::to_string(LSU_TIMEOUT_MS/1000) + " seconds";
+                extern void mqtt_api_publish(const char *topic, const char *payload);
+                mqtt_api_publish(topic.c_str(), payload.c_str());
+                
+                ESP_LOGW(LSU_MANAGER_TAG, "LSU %lu timed out after %lu seconds - removed and alert sent", 
+                         lsu_id, (uint32_t) LSU_TIMEOUT_MS/1000);
+                
+                // Remove the LSU
                 connectedLSUs.erase(event.lsuId);
+                update_lsu_count(connectedLSUs.size());
             }
         }
     }

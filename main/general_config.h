@@ -12,7 +12,7 @@
 
 /* Defines -------------------------------------------------------------------*/
 #define CU_ADDRESS 0x01
-#define TIME_PERIOD_MS 120000 // 2 minutes
+#define TIME_PERIOD_MS 60000 // 1 minute
 #define MAX_LSU_COUNT 100
 
 #endif /* GENERAL_CONFIG_H */
