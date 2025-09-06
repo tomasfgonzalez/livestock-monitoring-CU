@@ -7,6 +7,7 @@
   */
 
 #include "LSU.h"
+#include "esp_timer.h"
 
 LSU::LSU(uint32_t lsuId, uint32_t timeSlotInPeriod) : id(lsuId), timeSlotInPeriod(timeSlotInPeriod) {
   lastConnectionTime_us = esp_timer_get_time();

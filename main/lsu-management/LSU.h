@@ -10,21 +10,20 @@
 #define LSU_H
 
 #include <cstdint>
-#include "esp_timer.h"
 
 class LSU {
   private:
     uint32_t id;
     uint32_t timeSlotInPeriod;
-    uint64_t lastConnectionTime_us;
+    int64_t lastConnectionTime_us; // Microseconds since boot (can be negative)
 
   public:
     LSU(uint32_t lsuId, uint32_t timeSlotInPeriod);
 
     uint32_t getId() const {return id;};
     uint32_t getTimeSlotInPeriod() const {return timeSlotInPeriod;};
-    uint64_t getLastConnectionTime() { return lastConnectionTime_us; };
-    void setLastConnectionTime(uint64_t time) { lastConnectionTime_us = time; };
+    int64_t getLastConnectionTime() { return lastConnectionTime_us; };
+    void setLastConnectionTime(int64_t time_us) { lastConnectionTime_us = time_us; };
 };
 
 #endif /* LSU_H */

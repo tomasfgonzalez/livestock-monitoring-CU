@@ -21,7 +21,6 @@
 
 #include "wi-fi/wifi.h"
 #include "wi-fi/mqtt_api.h"
-#include "display/oled.h"
 
 extern "C" void app_main(void) {
   static const char *MAIN_TAG = "App";
@@ -32,7 +31,7 @@ extern "C" void app_main(void) {
   uart_init();
 
   vTaskDelay(pdMS_TO_TICKS(3000));
-  push_status_to_oled();
+  set_display_ready(true);
 
   // Init connectivity
   xTaskCreate(server_connection_task, "server_connection_task", 1024 * 8, NULL, configMAX_PRIORITIES - 1, NULL);
@@ -50,9 +49,6 @@ extern "C" void app_main(void) {
   rylr998_setChannel(0, CU_ADDRESS, aux_port);
   while (1) {
     printf("--------------------------------\n");
-    // ESP_LOGI(MAIN_TAG, "Sending config package");
-    // CU_sendTest();
-    // mqtt_api_publish("demo/room1", "Test!");
     vTaskDelay(pdMS_TO_TICKS(3000));
   }
 }

@@ -25,10 +25,13 @@ char wifi_status[32] = "Wi-Fi: --";
 char mqtt_status[32] = "MQTT: --";
 char lsu_count[32] = "LSUs: 0";
 bool heartbeat_active = false;
+bool display_ready = false;
 
 /* Public functions ----------------------------------------------------- */
 void push_status_to_oled() {
-  oled_status(wifi_status, mqtt_status, lsu_count, heartbeat_active);
+  if (display_ready) {
+    oled_status(wifi_status, mqtt_status, lsu_count, heartbeat_active);
+  }
 }
 
 void update_wifi_status(char *status) {
@@ -49,4 +52,11 @@ void update_lsu_count(int count) {
 void update_heartbeat_status(bool is_active) {
   heartbeat_active = is_active;
   push_status_to_oled();
+}
+
+void set_display_ready(bool ready) {
+  display_ready = ready;
+  if (ready) {
+    push_status_to_oled(); // Update display when it becomes ready
+  }
 }

@@ -20,18 +20,23 @@
 #include "general_config.h"
 
 /* Macros -------------------------------------------------------------------*/
-#define DEFAULT_TIMEOUT_MS 5000
-#define LSU_TIMEOUT_MS (2 * TIME_PERIOD_MS)  // Two whole periods
-#define LSU_TIMEOUT_PADDING_MS 1000
+#define LSU_TIMEOUT_US (2 * TIME_PERIOD_MS * 1000)  // Two whole periods in microseconds
+#define LSU_TIMEOUT_PADDING_US 1000000 // 1 second
 
 /* Structs -------------------------------------------------------------------*/
 struct TimeoutEvent {
   uint32_t lsuId;
-  uint64_t timeoutTime; // microseconds since boot
+  int64_t timeoutTime; // microseconds since boot when timeout occurs
   
   bool operator>(const TimeoutEvent& other) const {
     return timeoutTime > other.timeoutTime;
   }
+};
+
+struct LSUData {
+  uint32_t id;
+  uint32_t timeSlotInPeriod;
+  int64_t lastConnectionTime_us; // Microseconds since boot (can be negative)
 };
 
 /* Typedefs ------------------------------------------------------------------*/
@@ -43,6 +48,7 @@ class LSUManager {
   private:
     LSUMap connectedLSUs;
     TimeoutQueue timeoutQueue;
+    uint32_t nextLSUId;
     
     /**
      * @brief Generates a unique ID for a new LSU
@@ -50,10 +56,19 @@ class LSUManager {
      */
     uint32_t generateLSUId();
 
+    /**
+     * @brief Generates a time slot for a new LSU
+     * @return Time slot
+     */
     uint32_t generateTimeSlot();
 
+    /**
+     * @brief Updates the next ID counter based on loaded LSUs
+     */
+    void updateNextIdCounter();
+
   public:
-    LSUManager() {}
+    LSUManager() : nextLSUId(0x02) {} // Start at 0x02 to avoid conflict with CU
 
     /**
      * @brief Creates and adds a new LSU to the system
@@ -92,6 +107,20 @@ class LSUManager {
      * @return The count of connected LSUs
      */
     size_t getLSUCount() const { return connectedLSUs.size(); }
+
+    /**
+     * @brief Gets a list of all LSU data for debugging/monitoring
+     * @return Vector of LSUData containing all LSU information
+     */
+    std::vector<LSUData> getLsuSerializedData() const;
+
+    /**
+     * @brief Restores LSUs from serialized data (for NVS persistence)
+     * @param lsuDataVector Vector of LSUData to restore
+     * @param savedTimestamp Timestamp when data was saved (for time offset calculation)
+     * @return true if restore was successful, false otherwise
+     */
+    bool restoreLsuFromSerializedData(const std::vector<LSUData>& lsuDataVector, int64_t savedTimestamp_us = 0);
 };
 
 #endif /* LSU_MANAGER_H */

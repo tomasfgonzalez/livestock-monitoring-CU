@@ -60,6 +60,13 @@ void update_lsu_count(int count);
  */
 void update_heartbeat_status(bool is_active);
 
+/**
+ * @brief Set the display ready state
+ * @param ready: Boolean indicating if display is ready for updates
+ * @return None
+ */
+void set_display_ready(bool ready);
+
 #ifdef __cplusplus
 }
 #endif

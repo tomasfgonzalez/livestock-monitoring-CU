@@ -4,6 +4,7 @@ idf_component_register(
   "display/status.c"
   "lsu-management/LSUManager.cpp"
   "lsu-management/LSU.cpp"
+  "lsu-management/lsu_nvs_persistence.cpp"
   "lora/rylr998.c"
   "lora/cu_comms.cpp"
   "tasks/rx_channel.cpp"

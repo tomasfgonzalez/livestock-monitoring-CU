@@ -10,6 +10,7 @@
 #include "process_requests.h"
 
 #include "LSUManager.h"
+#include "lsu_nvs_persistence.h"
 #include "request_queue.h"
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -51,6 +52,9 @@ void process_sync_request(Request* request, LSUManager& manager) {
     mqtt_api_publish(topic.c_str(), payload.c_str());
     
     ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Published device link notification to MQTT topic: %s", topic.c_str());
+    
+    // Save to NVS after creating LSU
+    lsu_nvs_save(manager);
   } else {
     ESP_LOGW(PROCESS_REQUEST_TASK_TAG, "Failed to create LSU");
   }
@@ -65,6 +69,9 @@ void process_data_request(Request* request, LSUManager& manager) {
 
   std::string topic = "livestock/" + std::to_string(lsu_id);
   mqtt_api_publish(topic.c_str(), request->data.c_str());
+  
+  // Save to NVS after updating LSU connection time
+  lsu_nvs_save(manager);
 }
 
 /* Functions ------------------------------------------------------------ */
@@ -72,7 +79,18 @@ void process_requests_task(void *arg) {
   ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Request processing task started");
 
   LSUManager manager;
-  uint32_t last_timeout_check = 0;
+  
+  // Small delay to ensure display is ready
+  vTaskDelay(pdMS_TO_TICKS(1000));
+  
+  // Load LSU data from NVS on boot
+  if (lsu_nvs_load(manager)) {
+    ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Successfully restored LSU data from NVS");
+  } else {
+    ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "No LSU data found in NVS or failed to load");
+  }
+  
+  uint32_t last_timeout_check_ms = 0;
   const uint32_t TIMEOUT_CHECK_INTERVAL_MS = 10000; // Check every 10 seconds
 
   while (1) {
@@ -100,11 +118,13 @@ void process_requests_task(void *arg) {
       }
     }
 
-    // Check for LSU timeouts every 30 seconds
-    uint32_t current_time = esp_timer_get_time() / 1000; // Convert to milliseconds
-    if (current_time - last_timeout_check >= TIMEOUT_CHECK_INTERVAL_MS) {
+    // Check for LSU timeouts every 10 seconds
+    uint32_t current_time_ms = esp_timer_get_time() / 1000; // Convert to milliseconds
+    if (current_time_ms - last_timeout_check_ms >= TIMEOUT_CHECK_INTERVAL_MS) {
       manager.processTimeouts();
-      last_timeout_check = current_time;
+      // Save to NVS after processing timeouts (in case LSUs were removed)
+      lsu_nvs_save(manager);
+      last_timeout_check_ms = current_time_ms;
     }
     
     vTaskDelay(pdMS_TO_TICKS(100));
