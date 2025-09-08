@@ -45,7 +45,7 @@ void process_sync_request(Request* request, LSUManager& manager) {
     CU_sendConfigPackage(&config_package, lsu_id_to_send);
     
     // Publish device linking notification to MQTT
-    std::string topic = "livestock/" + std::to_string(lsu_id);
+    std::string topic = "livestock/" + std::to_string(lsu_id) + "/link";
     std::string payload = "Device linked with ID: " + std::to_string(lsu_id) + 
                           ", Time slot: " + std::to_string(lsu_time_slot) + 
                           ", Period: " + std::to_string(TIME_PERIOD_MS) + "ms";
@@ -67,7 +67,7 @@ void process_data_request(Request* request, LSUManager& manager) {
   manager.keepaliveLSU(lsu_id);
   ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Received data from LSU %lu: %s", lsu_id, request->data.c_str());
 
-  std::string topic = "livestock/" + std::to_string(lsu_id);
+  std::string topic = "livestock/" + std::to_string(lsu_id) + "/data";
   mqtt_api_publish(topic.c_str(), request->data.c_str());
   
   // Save to NVS after updating LSU connection time

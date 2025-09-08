@@ -108,7 +108,7 @@ bool LSUManager::removeLSU(uint32_t lsuId) {
         uint32_t lsu_id = it->second->getId();
         
         // Publish device removal notification to MQTT
-        std::string topic = "livestock/" + std::to_string(lsu_id);
+        std::string topic = "livestock/" + std::to_string(lsu_id) + "/alert";
         std::string payload = "Device manually removed - ID: " + std::to_string(lsu_id);
         extern void mqtt_api_publish(const char *topic, const char *payload);
         mqtt_api_publish(topic.c_str(), payload.c_str());
@@ -163,7 +163,7 @@ void LSUManager::processTimeouts() {
                 uint32_t lsu_id = lsu->getId();
                 
                 // Send timeout alert to MQTT
-                std::string topic = "livestock/" + std::to_string(lsu_id);
+                std::string topic = "livestock/" + std::to_string(lsu_id) + "/alert";
                 std::string payload = "ALERT: Device timeout - LSU " + std::to_string(lsu_id) + 
                                       " has not communicated for " + std::to_string(LSU_TIMEOUT_US/1000000) + " seconds";
                 extern void mqtt_api_publish(const char *topic, const char *payload);
