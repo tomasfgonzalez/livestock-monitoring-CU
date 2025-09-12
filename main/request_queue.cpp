@@ -21,7 +21,7 @@
 #include "freertos/FreeRTOS.h"
 
 /* Defines ------------------------------------------------------------ */
-#define WAIT_TIME_BEFORE_RESPONSE 1000 // 1 second in ticks
+#define WAIT_TIME_BEFORE_RESPONSE 10 // 1 second in ticks
 
 /* Private variables --------------------------------------------------------- */
 static const char *REQUEST_QUEUE_TAG = "RQ_QUEUE";

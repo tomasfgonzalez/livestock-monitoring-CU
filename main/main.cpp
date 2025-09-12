@@ -23,6 +23,9 @@
 #include "wi-fi/mqtt_api.h"
 
 extern "C" void app_main(void) {
+  esp_reset_reason_t reason = esp_reset_reason();
+  ESP_LOGI("RESET", "Previous reset reason: %d", reason);
+
   static const char *MAIN_TAG = "App";
   ESP_LOGI(MAIN_TAG, "Starting CU");
   nvs_flash_init();
@@ -40,16 +43,16 @@ extern "C" void app_main(void) {
   // Start tasks
   static UartPort_t main_port = UART_PORT_MAIN;
   static UartPort_t aux_port = UART_PORT_AUX;
-  xTaskCreate(rx_channel_task, "uart_main_rx_task", 1024 * 2, &main_port, configMAX_PRIORITIES - 2, NULL);
-  xTaskCreate(rx_channel_task, "uart_aux_rx_task", 1024 * 2, &aux_port, configMAX_PRIORITIES - 2, NULL);
-  xTaskCreate(process_requests_task, "process_request_task", 1024 * 4, NULL, configMAX_PRIORITIES - 2, NULL);
-  xTaskCreate(heartbeat_task, "heartbeat_task", 1024 * 4, NULL, configMAX_PRIORITIES - 3, NULL);
+  xTaskCreate(rx_channel_task, "uart_main_rx_task", 1024 * 6, &main_port, configMAX_PRIORITIES - 1, NULL);
+  xTaskCreate(rx_channel_task, "uart_aux_rx_task", 1024 * 6, &aux_port, configMAX_PRIORITIES - 2, NULL);
+  xTaskCreate(process_requests_task, "process_request_task", 1024 * 4, NULL, configMAX_PRIORITIES - 3, NULL);
+  //xTaskCreate(heartbeat_task, "heartbeat_task", 1024 * 4, NULL, configMAX_PRIORITIES - 4, NULL);
 
   // Configure channels
   rylr998_setChannel(1, CU_ADDRESS, main_port);
   rylr998_setChannel(0, CU_ADDRESS, aux_port);
   while (1) {
-    printf("--------------------------------\n");
-    vTaskDelay(pdMS_TO_TICKS(3000));
+   // printf("--------------------------------\n");
+    vTaskDelay(pdMS_TO_TICKS(500));
   }
 }
