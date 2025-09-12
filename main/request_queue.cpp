@@ -28,7 +28,7 @@ static const char *REQUEST_QUEUE_TAG = "RQ_QUEUE";
 std::queue<Request*> RequestQueue;
 
 /* Functions ------------------------------------------------------------ */
-void post_request(std::string data, uint16_t from_id) {
+void post_request(std::string data, uint16_t from_id, UartPort_t sourcePort) {
   // Validate the format of the data
 
   // TODO: Add error handling try/catch
@@ -37,7 +37,8 @@ void post_request(std::string data, uint16_t from_id) {
     from_id,
     (data.starts_with("SYNC")) ? REQUEST_TYPE_SYNC : REQUEST_TYPE_DATA,
     data,
-    xTaskGetTickCount()
+    xTaskGetTickCount(),
+    sourcePort
   });
   RequestQueue.push(request);
 }

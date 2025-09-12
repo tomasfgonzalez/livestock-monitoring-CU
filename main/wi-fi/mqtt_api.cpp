@@ -25,6 +25,7 @@ static const char *MQTT_BROKER_URI = "mqtt://" MQTT_BROKER_IP ":" MQTT_BROKER_PO
 
 /* Variables ------------------------------------------------------------- */
 static piral::MQTTClient* mqtt = nullptr;
+static bool mqtt_connected = false;
 
 /* Function implementations -------------------------------------------------*/
 void mqtt_api_init() {
@@ -32,7 +33,25 @@ void mqtt_api_init() {
   mqtt->begin();
 }
 
+void mqtt_api_deinit() {
+  if (mqtt) {
+    mqtt->end();
+    delete mqtt;
+    mqtt = nullptr;
+  }
+  mqtt_connected = false;
+}
+
 void mqtt_api_publish(const char *topic, const char *payload) {
+  if (!mqtt_connected) return;
   ESP_LOGI(MQTT_API_TAG, "Publishing message to topic: %s", topic);
   mqtt->publish_data(topic, payload);
+}
+
+bool mqtt_api_is_connected() {
+  return mqtt_connected;
+}
+
+void mqtt_api_set_connected(bool connected) {
+  mqtt_connected = connected;
 }

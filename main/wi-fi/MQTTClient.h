@@ -50,12 +50,25 @@ class MQTTClient : public idf::mqtt::Client {
      */
     void on_data(const esp_mqtt_event_handle_t evt) override;
 
+    /**
+     * @brief Called when MQTT client disconnects from broker
+     * @param evt MQTT event handle (unused)
+     * @details Updates connection status when disconnection occurs
+     */
+    void on_disconnected(const esp_mqtt_event_handle_t) override;
+
   public:
     MQTTClient(const char *broker_uri, const char *client_id = "cu-01");
 
     inline void begin() {
       if (handler) {
         esp_mqtt_client_start(handler.get());
+      }
+    }
+
+    inline void end() {
+      if (handler) {
+        esp_mqtt_client_stop(handler.get());
       }
     }
 

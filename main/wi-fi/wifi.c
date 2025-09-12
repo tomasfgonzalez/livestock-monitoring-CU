@@ -20,6 +20,7 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 
 #include "display/status.h"
 
@@ -27,16 +28,21 @@ static const char *WIFI_TAG = "Wi-Fi";
 static EventGroupHandle_t wifi_event_group;
 static esp_netif_t *sta_netif = NULL;
 
+static int deadline_us = -1;
+
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
   ESP_LOGI(WIFI_TAG, "Event: %s, ID: %ld", event_base, event_id);
   if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
     esp_wifi_connect();
   } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-    esp_wifi_connect();
     update_wifi_status("Offline");
     wifi_event_sta_disconnected_t *disc = (wifi_event_sta_disconnected_t*) event_data;
     ESP_LOGW("Wi-Fi", "Disconnected, reason=%d", disc->reason);
-    ESP_LOGI(WIFI_TAG, "Retrying connection…");
+    if (esp_timer_get_time() < deadline_us) {
+      esp_wifi_connect();
+      ESP_LOGI(WIFI_TAG, "Retrying connection…");
+    }
+    return;
   } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
     ip_event_got_ip_t* event = event_data;
     ESP_LOGI(WIFI_TAG, "Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
@@ -80,13 +86,20 @@ void wifi_init_sta(void) {
   ESP_LOGI(WIFI_TAG, "wifi_init_sta finished.");
 }
 
-void wifi_start() {
+void wifi_start(uint32_t timeout_ms) {
+  // Use esp_timer_get_time() for absolute timeout
+  int64_t start_time_us = esp_timer_get_time();
+  int64_t timeout_us = (int64_t)timeout_ms * 1000;
+  deadline_us = start_time_us + timeout_us;
+
+  TickType_t timeout_ticks = (timeout_ms == 0) ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms);
+  
   EventBits_t bits = xEventGroupWaitBits(
     wifi_event_group,
     WIFI_CONNECTED_BIT,
     pdFALSE,
     pdFALSE,
-    portMAX_DELAY
+    timeout_ticks
   );
   
   if (bits & WIFI_CONNECTED_BIT) {

@@ -22,6 +22,8 @@
 #include <queue>
 #include <string>
 
+#include "uart.h"
+
 /* Structs ------------------------------------------------------------- */
 enum RequestType {
   REQUEST_TYPE_SYNC,
@@ -33,6 +35,7 @@ struct Request {
   RequestType type;
   std::string data;
   uint32_t timestamp;
+  UartPort_t sourcePort;
 };
 
 /* Public API ---------------------------------------------------------- */
@@ -41,8 +44,9 @@ struct Request {
  * 
  * @param data 
  * @param from_id
+ * @param sourcePort
  */
-void post_request(std::string data, uint16_t from_id);
+void post_request(std::string data, uint16_t from_id, UartPort_t sourcePort);
 
 /**
  * @brief Get a request from the queue

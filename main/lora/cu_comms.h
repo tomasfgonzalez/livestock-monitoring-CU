@@ -23,6 +23,8 @@
 /* Includes ------------------------------------------------------------ */
 #include <stdint.h>
 
+#include "uart.h"
+
 /* Structs ------------------------------------------------------------ */
 
 /**
@@ -45,15 +47,16 @@ void CU_sendTest();
 
 /**
  * @brief Send a config package to the LSU
+ * @param config_package: The configuration package to send
  * @param destination: The destination address of the LSU
- * @param lsu_id: The ID of the LSU
  */
 void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destination);
 
 /**
  * @brief Send a data acknowledgement to the LSU
  * @param destination: The destination address of the LSU
+ * @param sourcePort: The port to send the response on (same as received)
  */
-void CU_sendDataAck(uint32_t destination);
+void CU_sendDataAck(uint32_t destination, UartPort_t sourcePort);
 
 #endif /* CU_COMMS_H */

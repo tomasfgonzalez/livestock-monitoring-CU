@@ -29,6 +29,7 @@ extern "C" void app_main(void) {
   oled_init();
   oled_welcome();
   uart_init();
+  init_display_mutex();
 
   vTaskDelay(pdMS_TO_TICKS(3000));
   set_display_ready(true);

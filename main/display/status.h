@@ -26,6 +26,13 @@ extern "C" {
 
 /* Public functions ---------------------------------------------------------- */
 /**
+ * @brief Initialize the display mutex for thread-safe operations
+ * @param None
+ * @return None
+ */
+void init_display_mutex();
+
+/**
  * @brief Push the status to the OLED display
  * @param None
  * @return None

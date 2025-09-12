@@ -18,6 +18,7 @@
 #include "MQTTClient.h"
 
 #include "display/status.h"
+#include "mqtt_api.h"
 #include "esp_log.h"
 
 /* Defines --------------------------------------------------------------- */
@@ -32,6 +33,7 @@ piral::MQTTClient::MQTTClient(const char *broker_uri, const char *client_id)
 
 void piral::MQTTClient::on_connected(const esp_mqtt_event_handle_t) {
   ESP_LOGI(MQTT_TAG, "MQTT connected ✅");
+  mqtt_api_set_connected(true);
   update_mqtt_status((char *)"Online");
   publish_data("piral/ecu/online", {"true"});
   
@@ -42,6 +44,12 @@ void piral::MQTTClient::on_connected(const esp_mqtt_event_handle_t) {
 
 void piral::MQTTClient::on_data(const esp_mqtt_event_handle_t evt) {
   ESP_LOGI(MQTT_TAG, "RX %.*s → %.*s", evt->topic_len, evt->topic, evt->data_len, evt->data);
+}
+
+void piral::MQTTClient::on_disconnected(const esp_mqtt_event_handle_t) {
+  ESP_LOGW(MQTT_TAG, "MQTT disconnected ❌");
+  mqtt_api_set_connected(false);
+  update_mqtt_status((char *)"Offline");
 }
 
 inline void piral::MQTTClient::publish_data(const std::string &topic, const std::string &data) {

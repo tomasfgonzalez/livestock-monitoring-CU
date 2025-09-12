@@ -63,7 +63,7 @@ void process_sync_request(Request* request, LSUManager& manager) {
 void process_data_request(Request* request, LSUManager& manager) {
   uint32_t lsu_id = request->from_id;
 
-  CU_sendDataAck(lsu_id);
+  CU_sendDataAck(lsu_id, request->sourcePort);
   manager.keepaliveLSU(lsu_id);
   ESP_LOGI(PROCESS_REQUEST_TASK_TAG, "Received data from LSU %lu: %s", lsu_id, request->data.c_str());
 

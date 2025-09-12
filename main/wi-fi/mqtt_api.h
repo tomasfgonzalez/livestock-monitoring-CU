@@ -19,12 +19,18 @@
 #define MQTT_API_H
 
 /* Defines --------------------------------------------------------------- */
-#define MQTT_BROKER_IP "10.79.224.70"
+#define MQTT_BROKER_IP "172.24.255.70"
 #define MQTT_BROKER_PORT "1883"
 
 /* Function declarations ----------------------------------------------------*/
 void mqtt_api_init();
 
+void mqtt_api_deinit();
+
 void mqtt_api_publish(const char *topic, const char *payload);
+
+bool mqtt_api_is_connected();
+
+void mqtt_api_set_connected(bool connected);
 
 #endif // MQTT_API_H

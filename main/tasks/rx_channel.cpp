@@ -55,7 +55,7 @@ void rx_channel_task(void *arg) {
         // Create a string from the received data in rcv_data->data
         std::string data(rcv_data->data);
         ESP_LOGI(RX_CHANNEL_TASK_TAG, "Converted to string: %s", data.c_str());
-        post_request(data, rcv_data->id);
+        post_request(data, rcv_data->id, uart_port);
         ESP_LOGI(RX_CHANNEL_TASK_TAG, "Request parsed and added to queue");
       }
     }

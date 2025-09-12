@@ -37,8 +37,9 @@ void wifi_init_sta(void);
 
 /**
  * @brief Wifi start
+ * @param timeout_ms: Timeout in milliseconds (0 for no timeout)
  */
-void wifi_start(void);
+void wifi_start(uint32_t timeout_ms);
 
 #ifdef __cplusplus
 }

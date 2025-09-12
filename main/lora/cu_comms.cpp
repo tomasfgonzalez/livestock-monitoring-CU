@@ -68,12 +68,13 @@ void CU_sendConfigPackage(LSU_config_package_t *config_package, uint32_t destina
   rylr998_getCommand(RYLR_OK, UART_PORT_AUX);
 }
 
-void CU_sendDataAck(uint32_t destination) {
+void CU_sendDataAck(uint32_t destination, UartPort_t sourcePort) {
   memset(tx_buff, 0, TX_BUFF_SIZE);
   snprintf(tx_buff, TX_BUFF_SIZE, AT"SEND=%lu,3,ACK"END, destination);
 
-  ESP_LOGI(CU_COMMS_TAG, "Sending data ACK: %s", tx_buff);
-  rylr998_sendCommand(tx_buff, UART_PORT_MAIN);
+  ESP_LOGI(CU_COMMS_TAG, "Sending data ACK via %s channel: %s", 
+          sourcePort == UART_PORT_MAIN ? "MAIN" : "AUX", tx_buff);
+  rylr998_sendCommand(tx_buff, sourcePort);
   vTaskDelay(pdMS_TO_TICKS(500));
-  rylr998_getCommand(RYLR_OK, UART_PORT_MAIN);
+  rylr998_getCommand(RYLR_OK, sourcePort);
 }
